@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+import React, { Suspense } from 'react';
+import './App.less';
+import { Switch, BrowserRouter, Route } from 'react-router-dom';
+import routes from './routes';
+import Spinner from './sharedComponents/loadingIndicator/Spinner';
+import { Provider } from 'react-redux';
+import store from './store';
+const App = () => {
+  const routers = routes.map((route, index) => {
+    return (
+      <Route
+        key={index}
+        path={route.path}
+        exact={route.exact}
+        name={route.name}
+        render={(props) => <route.component {...props} />}
+      />
+    );
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Suspense fallback={<Spinner />}>
+          <Switch>{routers}</Switch>
+        </Suspense>
+      </BrowserRouter>
+    </Provider>
   );
-}
+};
 
 export default App;
